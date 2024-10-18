@@ -10,13 +10,11 @@ name: Upload Python Package
 
 on:
   release:
-    environment: prod
     types: [published, prereleased]
     branches:
       - master
       
   workflow_dispatch:
-    environment: prod
 
 permissions:
   contents: read
