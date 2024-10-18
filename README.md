@@ -2,7 +2,7 @@
 
 This *lightweight* Python package provides flexible way to send webhooks to one or more URLs, with retry mechanisms and support for various webhook configurations.
 
-[](https://github.com/levkany/simple-webhooks/actions/workflows/python-publish.yml/badge.svg)
+[![Build Status](https://github.com/levkany/simple-webhooks/actions/workflows/python-publish.yml/badge.svg)]()
 
 ## Features
 - Send webhook to multiple URLs.
