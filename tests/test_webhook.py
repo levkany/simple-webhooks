@@ -68,20 +68,20 @@ def test_send_unsuccessful_multiple(req):
 @patch('requests.Session.post')
 def test_send_exception(req):
     req.side_effect = RequestException()
-    with pytest.raises(RequestException):
-        webhooks.send(
-            "https://example.com/webhook",
-            json={"event": "test_event"}
-        )
+    res = webhooks.send(
+        "https://example.com/webhook",
+        json={"event": "test_event"}
+    )
     assert req.call_count == 1
+    assert res is None
 
 
 @patch('requests.Session.post')
 def test_send_exception_multiple(req):
     req.side_effect = RequestException()
-    with pytest.raises(RequestException):
-        webhooks.send(
-            "https://example.com/webhook", "https://domain.com/webhook",
-            json={"event": "test_event"}
-        )
+    res = webhooks.send(
+        "https://example.com/webhook", "https://domain.com/webhook",
+        json={"event": "test_event"}
+    )
     assert req.call_count == 1
+    assert res is None
