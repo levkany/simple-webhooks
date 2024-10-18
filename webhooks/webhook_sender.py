@@ -67,7 +67,8 @@ def send(
             results.append(res)
             logger.info(f'successfully sent webhook to {url}')
 
-        except requests.exceptions.RequestException:
+        except requests.exceptions.RequestException as e:
+            logger.error(f'failed to send webhook to {url}\r\n{e}')
             return None
 
         logger.debug(f'closing webhook session ..')
