@@ -4,30 +4,28 @@ This *lightweight* Python package provides flexible way to send webhooks to one 
 
 ## Features
 - Send webhook to multiple URLs.
-- Retry failed webhook requests.
-- Extensible to support custom webhook logic.
+- Automatically retry failed webhook requests.
+- Secure and reliable way to handle webhooks
+- Simple and straight forward
+- Extensible by design
+- Currently, supports json payload only
 
 ## Installation
 
 ```bash
-pip install webhooks
+pip install simple-webhooks
 ```
 
-## usage
-
+## Usage
 
 ```python
-from webhooks import RetryWebhookSender, WebhookManager
+import webhooks
 
 
-sender = RetryWebhookSender()
-manager = WebhookManager(sender)
-res = manager.send_to_multiple(
-    ['https://www.example.com/webhook'],
-    {'event': 'my_event'}
+res = webhooks.send(
+    'https://www.example.com/webhook', 'https://www.domain.com/webhook',
+    json={'event': 'my_event'}
 )
-
 for result in res:
     print(result.status_code)
-
 ```
