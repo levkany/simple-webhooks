@@ -7,7 +7,6 @@ name = "Simple-Webhooks"
 version = "1.0.1a"
 description = "Lightweight and flexible Python Package to send webhooks"
 readme = { file = "README.md", content-type = "text/markdown" }
-long_description = "for more infomration visit: https://github.com/levkany/simple-webhooks"
 authors = [
     {name="Lev kany", email="levkany.dev@gmail.com"}
 ]
