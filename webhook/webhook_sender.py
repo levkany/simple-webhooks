@@ -69,7 +69,7 @@ class RetryWebhookSender(WebhookSender):
         self.backoff_factor = backoff_factor
         self.statuses = statuses
         self.setup()
-        logger.debug(f'{self.__name__} initialized and set up.')
+        logger.debug(f'{self.__str__()} initialized and set up.')
 
     def setup(self):
         self.session = requests.Session()
@@ -87,10 +87,10 @@ class RetryWebhookSender(WebhookSender):
 
     def reset(self):
         self.setup()
-        logger.debug(f'{self.__name__} was resetted.')
+        logger.debug(f'{self.__str__()} was resetted.')
 
     def send(self, url: str, payload: dict = None) -> requests.Response:
-        logger.info(f'{self.__name__} sending webhook to {url} ..')
+        logger.info(f'{self.__str__()} sending webhook to {url} ..')
         res = self.session.post(url, json=payload)
-        logger.info(f'{self.__name__} successfully sent webhook to {url}')
+        logger.info(f'{self.__str__()} successfully sent webhook to {url}')
         return res
