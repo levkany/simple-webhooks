@@ -6,6 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "Simple-Webhooks"
 version = "1.0.0"
 description = "Lightweight and flexible Python Package to send webhooks"
+readme = { file = "README.md", content-type = "text/markdown" }
 authors = [
     {name="Lev kany", email="levkany.dev@gmail.com"}
 ]
