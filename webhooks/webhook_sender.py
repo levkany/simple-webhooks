@@ -27,6 +27,7 @@ def setup(
         _status_forcelist: tuple[int] = status_forcelist
 ) -> requests.Session:
 
+    logger.debug('setting up a new webhook session ..')
     session = requests.Session()
     retries = Retry(
         total=max_retries,
@@ -51,7 +52,7 @@ def send(
         backoff_factor: float = 0.3,
         _status_forcelist: tuple[int] = None,
         **kwargs
-) -> list[requests.Response] | requests.Response:
+) -> list[requests.Response] | requests.Response | None:
 
     results = []
     for url in urls:
@@ -60,9 +61,16 @@ def send(
         # cross-requests parameters are not shared, like auth, cookies, etc ..
         s = setup(max_retries, backoff_factor, _status_forcelist)
 
-        logger.info(f'sending webhook to {url} ..')
-        res = s.post(url, json=json, headers=headers, **kwargs)
-        results.append(res)
-        logger.info(f'successfully sent webhook to {url}')
+        try:
+            logger.info(f'sending webhook to {url} ..')
+            res = s.post(url, json=json, headers=headers, **kwargs)
+            results.append(res)
+            logger.info(f'successfully sent webhook to {url}')
+
+        except requests.exceptions.RequestException:
+            return None
+
+        logger.debug(f'closing webhook session ..')
+        s.close()
 
     return results if len(results) > 1 else results[0]
