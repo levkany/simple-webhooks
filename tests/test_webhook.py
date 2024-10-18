@@ -1,47 +1,87 @@
 from http import HTTPStatus
 import pytest
 from unittest.mock import Mock, patch
-from webhook import RetryWebhookSender
-from requests.exceptions import ConnectionError, SSLError, RequestException
+import webhooks
+from requests.exceptions import RequestException
 
 
 @patch('requests.Session.post')
 def test_send_successful(req):
     res = Mock()
+    webhooks.send(
+        "https://example.com/webhook",
+        json={"event": "test_event"}
+    )
+
     res.status_code = HTTPStatus.OK
     req.return_value = res
-
-    sender = RetryWebhookSender()
-    url = "https://example.com/webhook"
-    payload = {"event": "test_event"}
-    sender.send(url, payload)
 
     assert req.call_count == 1
     assert res.status_code == HTTPStatus.OK
 
 
 @patch('requests.Session.post')
-def test_send_http_faliure(req):
+def test_send_successful_multiple(req):
     res = Mock()
-    res.status_code = HTTPStatus.SERVICE_UNAVAILABLE
+    webhooks.send(
+        "https://example.com/webhook", "https://domain.com/webhook",
+        json={"event": "test_event"}
+    )
+
+    res.status_code = HTTPStatus.OK
     req.return_value = res
 
-    sender = RetryWebhookSender()
-    url = "https://example.com/webhook"
-    payload = {"event": "test_event"}
-    sender.send(url, payload)
-
-    assert req.call_count == 1
-    assert res.status_code == HTTPStatus.SERVICE_UNAVAILABLE
+    assert req.call_count == 2
+    assert res.status_code == HTTPStatus.OK
 
 
 @patch('requests.Session.post')
-def test_send_connection_faliure(req):
-    req.side_effect = [ConnectionError(), SSLError()]
+def test_send_unsuccessful(req):
+    res = Mock()
+    webhooks.send(
+        "https://example.com/webhook",
+        json={"event": "test_event"}
+    )
 
-    sender = RetryWebhookSender()
-    url = "https://example.com/webhook"
-    payload = {"event": "test_event"}
+    res.status_code = HTTPStatus.BAD_GATEWAY
+    req.return_value = res
 
+    assert req.call_count == 1
+    assert res.status_code == HTTPStatus.BAD_GATEWAY
+
+
+@patch('requests.Session.post')
+def test_send_unsuccessful_multiple(req):
+    res = Mock()
+    webhooks.send(
+        "https://example.com/webhook", "https://domain.com/webhook",
+        json={"event": "test_event"}
+    )
+
+    res.status_code = HTTPStatus.BAD_GATEWAY
+    req.return_value = res
+
+    assert req.call_count == 2
+    assert res.status_code == HTTPStatus.BAD_GATEWAY
+
+
+@patch('requests.Session.post')
+def test_send_exception(req):
+    req.side_effect = RequestException()
     with pytest.raises(RequestException):
-        sender.send(url, payload)
+        webhooks.send(
+            "https://example.com/webhook",
+            json={"event": "test_event"}
+        )
+    assert req.call_count == 1
+
+
+@patch('requests.Session.post')
+def test_send_exception_multiple(req):
+    req.side_effect = RequestException()
+    with pytest.raises(RequestException):
+        webhooks.send(
+            "https://example.com/webhook", "https://domain.com/webhook",
+            json={"event": "test_event"}
+        )
+    assert req.call_count == 1
